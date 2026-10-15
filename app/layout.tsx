@@ -18,7 +18,7 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Courtbook",
   description:
-    "Fantasy basketball rankings, trades, waivers, and scouting from last-season rates.",
+    "Fantasy basketball rankings, drafts, schedule, matchups, trades, and waivers from last-season rates.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

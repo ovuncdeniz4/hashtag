@@ -15,8 +15,8 @@ export function EmptyLeague() {
       <CardHeader>
         <CardTitle>Create a league first</CardTitle>
         <CardDescription>
-          Trade, waiver, and scouting tools read the league you build. Rankings
-          still work on the full player pool.
+          Draft, schedule, matchup, beast, smash, trade, waiver, and scouting
+          tools read the league you build. Rankings still work on the full player pool.
         </CardDescription>
       </CardHeader>
       <CardContent>

@@ -31,13 +31,16 @@ import { Input } from "@/components/ui/input";
 import { WeightFields } from "@/components/weight-fields";
 import { useLeague } from "@/components/league-provider";
 import { rankPlayers } from "@/lib/engine/rankings";
+import { auctionDollars, dynastyFactor } from "@/lib/engine/values";
 import { formatSigned, formatStat, zTone } from "@/lib/format";
 import { snapshot, players } from "@/lib/players";
 import {
   CATEGORY_KEYS,
   COUNTING_STAT_KEYS,
   STAT_LABELS,
+  auctionBudgetOf,
   defaultCategoryWeights,
+  rosterSizeOf,
   type Basis,
   type RankType,
   type ScoringMode,
@@ -69,6 +72,8 @@ export function RankingsBoard() {
   const [basis, setBasis] = useState<Basis>("perGame");
   const [rankType, setRankType] = useState<RankType>("standard");
   const [showZ, setShowZ] = useState(true);
+  const [dynasty, setDynasty] = useState(false);
+  const [auction, setAuction] = useState(false);
   const [mode, setMode] = useState<ScoringMode>(active?.mode ?? "categories");
   const [weights, setWeights] = useState<Weights>(
     active?.weights ?? defaultCategoryWeights(),
@@ -89,14 +94,33 @@ export function RankingsBoard() {
     if (active) saveLeague({ ...active, mode: nextMode, weights: nextWeights });
   };
 
-  const ranked = useMemo(
-    () =>
-      rankPlayers(players, weights, basis, rankType, mode).map((row, index) => ({
-        ...row,
-        rank: index + 1,
+  const ranked = useMemo(() => {
+    const priced = rankPlayers(players, weights, basis, rankType, mode).map((row) => ({
+      ...row,
+      dynasty: row.total * dynastyFactor(row.player.age),
+    }));
+    const ordered = dynasty
+      ? [...priced].sort(
+          (left, right) =>
+            right.dynasty - left.dynasty || left.player.name.localeCompare(right.player.name),
+        )
+      : priced;
+    const teamCount = Math.max(active?.teams.length ?? 12, 1);
+    const dollars = auctionDollars(
+      ordered.map((row) => ({
+        id: row.player.id,
+        total: dynasty ? row.dynasty : row.total,
       })),
-    [weights, basis, rankType, mode],
-  );
+      rosterSizeOf(active) * teamCount,
+      auctionBudgetOf(active),
+      teamCount,
+    );
+    return ordered.map((row, index) => ({
+      ...row,
+      rank: index + 1,
+      dollars: dollars.get(row.player.id) ?? 0,
+    }));
+  }, [weights, basis, rankType, mode, dynasty, active]);
 
   const visible = ranked.filter((row) => {
     const matchesName = row.player.name.toLowerCase().includes(query.trim().toLowerCase());
@@ -206,6 +230,18 @@ export function RankingsBoard() {
             Z-scores
           </Button>
         ) : null}
+        <Button
+          variant={dynasty ? "secondary" : "outline"}
+          onClick={() => setDynasty((current) => !current)}
+        >
+          Dynasty
+        </Button>
+        <Button
+          variant={auction ? "secondary" : "outline"}
+          onClick={() => setAuction((current) => !current)}
+        >
+          Auction
+        </Button>
       </div>
       <p className="text-sm text-muted-foreground">{snapshot.label}</p>
       <Table>
@@ -220,6 +256,8 @@ export function RankingsBoard() {
               <TableHead key={key}>{STAT_LABELS[key]}</TableHead>
             ))}
             <TableHead>Total</TableHead>
+            {dynasty ? <TableHead>Dynasty</TableHead> : null}
+            {auction ? <TableHead>$</TableHead> : null}
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -259,6 +297,16 @@ export function RankingsBoard() {
                   {formatSigned(row.total)}
                 </div>
               </TableCell>
+              {dynasty ? (
+                <TableCell>
+                  <div className="text-right tabular-nums">{formatSigned(row.dynasty)}</div>
+                </TableCell>
+              ) : null}
+              {auction ? (
+                <TableCell>
+                  <div className="text-right tabular-nums">{row.dollars}</div>
+                </TableCell>
+              ) : null}
             </TableRow>
           ))}
         </TableBody>

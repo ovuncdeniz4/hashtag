@@ -17,6 +17,11 @@ import { defaultCategoryWeights } from "@/lib/types";
 const links = [
   { href: "/", label: "Rankings" },
   { href: "/league", label: "League" },
+  { href: "/draft", label: "Draft" },
+  { href: "/schedule", label: "Schedule" },
+  { href: "/matchup", label: "Matchup" },
+  { href: "/beast", label: "Beast" },
+  { href: "/smash", label: "Smash" },
   { href: "/trade", label: "Trade" },
   { href: "/waivers", label: "Waivers" },
   { href: "/scout", label: "Scout" },

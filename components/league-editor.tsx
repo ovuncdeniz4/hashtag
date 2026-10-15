@@ -20,6 +20,8 @@ import { playerName, players } from "@/lib/players";
 import {
   CATEGORY_KEYS,
   COUNTING_STAT_KEYS,
+  DEFAULT_AUCTION_BUDGET,
+  DEFAULT_ROSTER_SIZE,
   weightsForMode,
   type League,
   type LeagueTeam,
@@ -102,7 +104,8 @@ export function LeagueEditor() {
           <CardHeader>
             <CardTitle>{draft.name}</CardTitle>
             <CardDescription>
-              Rosters and weights live in this browser. A later Yahoo import fills the same league.
+              Rosters and weights live in this browser. Yahoo, Sleeper, and Fantrax
+              import replace this same league.
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -112,6 +115,40 @@ export function LeagueEditor() {
                 value={draft.name}
                 onChange={(event) => update({ ...draft, name: event.target.value })}
               />
+              <div className="flex flex-wrap gap-3">
+                <div className="grid gap-1">
+                  <span className="text-sm text-muted-foreground">Roster spots</span>
+                  <div className="w-24">
+                    <Input
+                      aria-label="Roster spots"
+                      type="number"
+                      value={draft.rosterSize ?? DEFAULT_ROSTER_SIZE}
+                      onChange={(event) =>
+                        update({
+                          ...draft,
+                          rosterSize: Number(event.target.value) || DEFAULT_ROSTER_SIZE,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="grid gap-1">
+                  <span className="text-sm text-muted-foreground">Auction budget</span>
+                  <div className="w-24">
+                    <Input
+                      aria-label="Auction budget"
+                      type="number"
+                      value={draft.auctionBudget ?? DEFAULT_AUCTION_BUDGET}
+                      onChange={(event) =>
+                        update({
+                          ...draft,
+                          auctionBudget: Number(event.target.value) || DEFAULT_AUCTION_BUDGET,
+                        })
+                      }
+                    />
+                  </div>
+                </div>
+              </div>
               <Tabs
                 value={draft.mode}
                 onValueChange={(value) => {

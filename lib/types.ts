@@ -66,7 +66,20 @@ export type League = {
   mode: ScoringMode;
   weights: Weights;
   teams: LeagueTeam[];
+  /** Roster spots used for auction replacement. Omitted leagues use 13. */
+  rosterSize?: number;
+  /** Auction dollars per team. Omitted leagues use 200. */
+  auctionBudget?: number;
 };
+
+export const DEFAULT_ROSTER_SIZE = 13;
+export const DEFAULT_AUCTION_BUDGET = 200;
+
+export const rosterSizeOf = (league: League | null): number =>
+  league?.rosterSize ?? DEFAULT_ROSTER_SIZE;
+
+export const auctionBudgetOf = (league: League | null): number =>
+  league?.auctionBudget ?? DEFAULT_AUCTION_BUDGET;
 
 export const STAT_LABELS: Record<WeightKey, string> = {
   pts: "PTS",
