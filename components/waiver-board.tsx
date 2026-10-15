@@ -108,7 +108,14 @@ export function WaiverBoard() {
             ))}
           </div>
           <div className="grid gap-3 md:grid-cols-2">
-            <Select value={addId || "none"} onValueChange={(value) => setAddId(value === "none" || value === null ? "" : value)}>
+            <Select
+              items={{
+                none: "Choose a player",
+                ...Object.fromEntries(ranked.map((row) => [row.player.id, row.player.name])),
+              }}
+              value={addId || "none"}
+              onValueChange={(value) => setAddId(value === "none" || value === null ? "" : value)}
+            >
               <SelectTrigger aria-label="Add player">
                 <SelectValue placeholder="Add a player" />
               </SelectTrigger>
@@ -121,7 +128,16 @@ export function WaiverBoard() {
                 ))}
               </SelectContent>
             </Select>
-            <Select value={dropId} onValueChange={(value) => setDropId(value ?? "none")}>
+            <Select
+              items={{
+                none: "No player dropped",
+                ...Object.fromEntries(
+                  mine.playerIds.map((id) => [id, playersById.get(id)?.name ?? id]),
+                ),
+              }}
+              value={dropId}
+              onValueChange={(value) => setDropId(value ?? "none")}
+            >
               <SelectTrigger aria-label="Drop player">
                 <SelectValue placeholder="No player dropped" />
               </SelectTrigger>

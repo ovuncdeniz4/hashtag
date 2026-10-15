@@ -104,7 +104,11 @@ function TeamPick({
   onChange: (id: string) => void;
 }) {
   return (
-    <Select value={value} onValueChange={(next) => next && onChange(next)}>
+    <Select
+      items={Object.fromEntries(teams.map((team) => [team.id, team.name]))}
+      value={value}
+      onValueChange={(next) => next && onChange(next)}
+    >
       <SelectTrigger aria-label={label}>
         <SelectValue placeholder={label} />
       </SelectTrigger>

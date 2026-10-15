@@ -46,6 +46,21 @@ import {
 
 const positions = ["ALL", "PG", "SG", "SF", "PF", "C"] as const;
 
+const positionItems: Record<(typeof positions)[number], string> = {
+  ALL: "All positions",
+  PG: "PG",
+  SG: "SG",
+  SF: "SF",
+  PF: "PF",
+  C: "C",
+};
+
+const rankTypeItems: Record<RankType, string> = {
+  standard: "Standard",
+  h2h: "H2H floor",
+  minus1: "Minus 1",
+};
+
 /** Rankings for the full player pool, using the active league weights when one is open. */
 export function RankingsBoard() {
   const { active, saveLeague } = useLeague();
@@ -106,6 +121,7 @@ export function RankingsBoard() {
         <div className="grid gap-1">
           <span className="text-sm text-muted-foreground">Position</span>
           <Select
+            items={positionItems}
             value={position}
             onValueChange={(value) => {
               if (value !== null) setPosition(value as (typeof positions)[number]);
@@ -134,6 +150,7 @@ export function RankingsBoard() {
         </Tabs>
         {mode === "categories" ? (
           <Select
+            items={rankTypeItems}
             value={rankType}
             onValueChange={(value) => {
               if (value !== null) setRankType(value as RankType);

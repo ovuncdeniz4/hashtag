@@ -29,6 +29,10 @@ export function SiteHeader() {
   const summary = active
     ? weightSummary(active.weights, active.mode)
     : weightSummary(defaultCategoryWeights(), "categories");
+  const leagueItems: Record<string, string> = {
+    none: "No league",
+    ...Object.fromEntries(leagues.map((league) => [league.id, league.name])),
+  };
 
   return (
     <header className="border-b">
@@ -52,6 +56,7 @@ export function SiteHeader() {
         </nav>
         <div className="ml-auto flex min-w-48 flex-1 items-center justify-end gap-3 sm:flex-none">
           <Select
+            items={leagueItems}
             value={active?.id ?? "none"}
             onValueChange={(value) =>
               setActiveId(value === null || value === "none" ? null : value)

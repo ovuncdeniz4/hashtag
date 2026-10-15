@@ -113,7 +113,14 @@ export function TradeMachine() {
             />
           </div>
           <div className="mt-4 grid gap-3 md:grid-cols-2">
-            <Select value={waiverId} onValueChange={(value) => setWaiverId(value ?? "none")}>
+            <Select
+              items={{
+                none: "No waiver player",
+                ...Object.fromEntries(freeAgents.map((player) => [player.id, player.name])),
+              }}
+              value={waiverId}
+              onValueChange={(value) => setWaiverId(value ?? "none")}
+            >
               <SelectTrigger aria-label="Waiver player">
                 <SelectValue placeholder="No waiver player" />
               </SelectTrigger>
@@ -127,6 +134,10 @@ export function TradeMachine() {
               </SelectContent>
             </Select>
             <Select
+              items={{
+                left: "Add waiver player to the left",
+                right: "Add waiver player to the right",
+              }}
               value={waiverSide}
               onValueChange={(value) => {
                 if (value === "left" || value === "right") setWaiverSide(value);
@@ -178,7 +189,11 @@ function TeamSide({
   return (
     <div className="grid gap-2">
       <span className="text-sm text-muted-foreground">{label}</span>
-      <Select value={teamId} onValueChange={(value) => value && onTeam(value)}>
+      <Select
+        items={Object.fromEntries(teams.map((team) => [team.id, team.name]))}
+        value={teamId}
+        onValueChange={(value) => value && onTeam(value)}
+      >
         <SelectTrigger aria-label={label}>
           <SelectValue />
         </SelectTrigger>
@@ -190,7 +205,14 @@ function TeamSide({
           ))}
         </SelectContent>
       </Select>
-      <Select value={playerId || "none"} onValueChange={(value) => onPlayer(value === "none" || value === null ? "" : value)}>
+      <Select
+        items={{
+          none: "No player",
+          ...Object.fromEntries(roster.map((id) => [id, playerName(id)])),
+        }}
+        value={playerId || "none"}
+        onValueChange={(value) => onPlayer(value === "none" || value === null ? "" : value)}
+      >
         <SelectTrigger aria-label={`${label} player`}>
           <SelectValue placeholder="No player" />
         </SelectTrigger>
